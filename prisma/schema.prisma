@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./local-db/shortener-url.db"
+}
+
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  password String
+  shortUrls ShortUrl[]
+  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("users")
+}
+
+model ShortUrl {
+  id String @id
+  origin String
+  views Int @default(0)
+  userId String?
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deletedAt DateTime?
+  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("short_urls")
+}
