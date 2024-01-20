@@ -19,4 +19,35 @@ export class ShortenerRepository {
       },
     });
   }
+
+  async getOriginByUrlId(urlId: string): Promise<string | undefined> {
+    const origin = await this.prismaService.shortUrl
+      .update({
+        where: {
+          id: urlId,
+          deletedAt: null,
+        },
+        data: {
+          views: {
+            increment: 1,
+          },
+        },
+        select: {
+          origin: true,
+        },
+      })
+      .then((result) => {
+        if (result) {
+          return result.origin;
+        }
+
+        return;
+      })
+      .catch((error) => {
+        console.log('--- some error ---\n', error);
+        return undefined;
+      });
+
+    return origin;
+  }
 }

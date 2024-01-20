@@ -1,19 +1,32 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Res } from '@nestjs/common';
 import { ShortenerRepository } from './shortener.repository';
 import { ShortenerService } from './shortener.service';
+import { Response } from 'express';
 
 type ShortenInput = {
-  origin: string;
+  url: string;
 };
 
-@Controller('/short')
+@Controller()
 export class ShortenerController {
   constructor(
     private shortenerRepository: ShortenerRepository,
     private shortenerService: ShortenerService,
   ) {}
 
-  @Post()
+  @Get('/:urlId')
+  async redirect(@Param() params: { urlId: string }, @Res() res: Response) {
+    const id = params.urlId;
+    const origin = await this.shortenerRepository.getOriginByUrlId(id);
+
+    if (origin) {
+      return res.redirect(origin);
+    }
+
+    return res.status(404).json({ message: 'Nenhum registro encontrado!' });
+  }
+
+  @Post('/url')
   async shorten(@Body() input: ShortenInput) {
     const id = this.shortenerService.generateId();
     const shortUrlInfo = {
