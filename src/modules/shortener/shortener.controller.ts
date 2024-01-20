@@ -18,9 +18,17 @@ export class ShortenerController {
     const id = this.shortenerService.generateId();
     const shortUrlInfo = {
       id: id,
-      origin: input.origin,
+      origin: input.url,
     };
 
     await this.shortenerRepository.create(shortUrlInfo);
+
+    const shortUrl = `http://localhost:3000/${id}`;
+
+    return {
+      message: 'URL encurtada!',
+      shortURL: shortUrl,
+      originalURL: input.url,
+    };
   }
 }
