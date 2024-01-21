@@ -2,17 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
-
-type ValidatePasswordExpect = {
-  inputPassword: string;
-  userPassword: string;
-};
-
-type TokenPayloadExpect = {
-  uid: string;
-};
-
-type TokenSubject = 'access' | 'refresh';
+import type {
+  TokenSubject,
+  TokenPayloadExpect,
+  ValidatePasswordExpect,
+} from './user.types';
 
 @Injectable()
 export class UserService {

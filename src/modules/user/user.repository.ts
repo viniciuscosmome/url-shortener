@@ -1,16 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/lib/prisma/prisma.service';
 import { handleDatabaseError } from 'src/shared/errors/handler-database.errors';
-
-type CreateUserExpect = {
-  email: string;
-  password: string;
-};
-
-type GetUserResponse = {
-  id: string;
-  password: string;
-};
+import type { CreateUserExpect, GetUserResponse } from './user.types';
 
 @Injectable()
 export class UserRepository {
