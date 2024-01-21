@@ -2,7 +2,7 @@ import { Controller, Post, Body, Get, Param, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { ShortenerRepository } from './shortener.repository';
 import { ShortenerService } from './shortener.service';
-import { ShortenURLDto } from './shortener.dtos';
+import { ShortenURLDto, RedirectByURLIdDto } from './shortener.dtos';
 
 @Controller()
 export class ShortenerController {
@@ -11,10 +11,10 @@ export class ShortenerController {
     private shortenerService: ShortenerService,
   ) {}
 
-  @Get('/:urlId')
-  async redirect(@Param() params: { urlId: string }, @Res() res: Response) {
+  @Get('/:URLId')
+  async redirect(@Param() params: RedirectByURLIdDto, @Res() res: Response) {
     const origin = await this.shortenerRepository.getOriginByURLId(
-      params.urlId,
+      params.URLId,
     );
 
     if (origin) {

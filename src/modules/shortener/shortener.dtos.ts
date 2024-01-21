@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsUrl } from 'class-validator';
+import { IsNotEmpty, IsString, IsUrl, Matches } from 'class-validator';
 
 export class ShortenURLDto {
   @IsNotEmpty({ message: 'Este campo não pode estar vazio' })
@@ -12,4 +12,11 @@ export class ShortenURLDto {
     },
   )
   url: string;
+}
+
+export class RedirectByURLIdDto {
+  @Matches(/^[a-zA-Z0-9]{6}$/, {
+    message: 'Verifique o formato do link informado.',
+  })
+  URLId: string;
 }
