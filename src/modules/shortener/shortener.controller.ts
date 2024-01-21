@@ -16,8 +16,9 @@ export class ShortenerController {
 
   @Get('/:urlId')
   async redirect(@Param() params: { urlId: string }, @Res() res: Response) {
-    const id = params.urlId;
-    const origin = await this.shortenerRepository.getOriginByUrlId(id);
+    const origin = await this.shortenerRepository.getOriginByURLId(
+      params.urlId,
+    );
 
     if (origin) {
       return res.redirect(origin);
@@ -28,19 +29,16 @@ export class ShortenerController {
 
   @Post('/url')
   async shorten(@Body() input: ShortenInput) {
-    const id = this.shortenerService.generateId();
-    const shortUrlInfo = {
-      id: id,
+    const generated = this.shortenerService.generateURL();
+
+    await this.shortenerRepository.create({
+      id: generated.id,
       origin: input.url,
-    };
-
-    await this.shortenerRepository.create(shortUrlInfo);
-
-    const shortUrl = `http://localhost:3000/${id}`;
+    });
 
     return {
       message: 'URL encurtada!',
-      shortURL: shortUrl,
+      shortURL: generated.shortURL,
       originalURL: input.url,
     };
   }

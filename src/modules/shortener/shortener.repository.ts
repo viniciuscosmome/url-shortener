@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/lib/prisma/prisma.service';
 import { handleDatabaseError } from 'src/shared/errors/handler-database.errors';
 
-type CreateShortUrlInput = {
+type CreateShortURLInput = {
   id: string;
   origin: string;
   userId?: string | undefined;
@@ -12,8 +12,8 @@ type CreateShortUrlInput = {
 export class ShortenerRepository {
   constructor(private prismaService: PrismaService) {}
 
-  async create(input: CreateShortUrlInput): Promise<void> {
-    await this.prismaService.shortUrl
+  async create(input: CreateShortURLInput): Promise<void> {
+    await this.prismaService.shortURL
       .create({
         data: {
           id: input.id,
@@ -23,8 +23,8 @@ export class ShortenerRepository {
       .catch(handleDatabaseError);
   }
 
-  async getOriginByUrlId(urlId: string): Promise<string | undefined> {
-    const origin = await this.prismaService.shortUrl
+  async getOriginByURLId(urlId: string): Promise<string | undefined> {
+    const origin = await this.prismaService.shortURL
       .update({
         where: {
           id: urlId,
