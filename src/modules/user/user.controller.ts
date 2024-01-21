@@ -23,6 +23,11 @@ export class UserController {
   @Post('/sign-in')
   async signIn(@Body() input: SignInExpect) {
     const user = await this.userRepository.getUserByEmail(input.email);
+
+    if (!user) {
+      throw new UnauthorizedException('Credenciais inválidas');
+    }
+
     const isValidCredential = await this.userService.validatePassword({
       inputPassword: input.password,
       userPassword: user?.password,
