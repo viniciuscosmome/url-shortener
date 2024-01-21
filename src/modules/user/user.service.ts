@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 
 type ValidatePasswordExpect = {
@@ -7,11 +8,20 @@ type ValidatePasswordExpect = {
   userPassword: string;
 };
 
+type TokenPayloadExpect = {
+  uid: string;
+};
+
+type TokenSubject = 'access' | 'refresh';
+
 @Injectable()
 export class UserService {
   private passwordSalt: number;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private jwtService: JwtService,
+  ) {
     this.passwordSalt = parseInt(
       this.configService.get<string>('PASSWORD_SALT_ROUNDS'),
       10,
@@ -26,5 +36,25 @@ export class UserService {
   async validatePassword(input: ValidatePasswordExpect): Promise<boolean> {
     const isValid = await compare(input.inputPassword, input.userPassword);
     return isValid;
+  }
+
+  async generateJwtToken(
+    subject: TokenSubject,
+    payload: TokenPayloadExpect,
+  ): Promise<string> {
+    const config: JwtSignOptions = {
+      subject,
+    };
+
+    if (subject === 'access') {
+      config.expiresIn = '4h';
+    } else if (subject === 'refresh') {
+      config.notBefore = '4h';
+      config.expiresIn = '1d';
+    }
+
+    const token = await this.jwtService.signAsync(payload, config);
+
+    return token;
   }
 }

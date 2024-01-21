@@ -32,6 +32,12 @@ export class UserController {
       throw new UnauthorizedException('Credenciais inválidas');
     }
 
-    console.log('sign-in', input);
+    delete user.password;
+
+    const accessToken = await this.userService.generateJwtToken('access', {
+      uid: user.id,
+    });
+
+    return { accessToken };
   }
 }
