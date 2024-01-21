@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { compare, hash } from 'bcrypt';
 
 type ValidatePasswordExpect = {
@@ -8,8 +9,17 @@ type ValidatePasswordExpect = {
 
 @Injectable()
 export class UserService {
+  private passwordSalt: number;
+
+  constructor(private configService: ConfigService) {
+    this.passwordSalt = parseInt(
+      this.configService.get<string>('PASSWORD_SALT_ROUNDS'),
+      10,
+    );
+  }
+
   async hashPassword(password: string): Promise<string> {
-    const hashed = await hash(password, 2);
+    const hashed = await hash(password, this.passwordSalt);
     return hashed;
   }
 
