@@ -1,11 +1,8 @@
 import { Controller, Post, Body, Get, Param, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { ShortenerRepository } from './shortener.repository';
 import { ShortenerService } from './shortener.service';
-import { Response } from 'express';
-
-type ShortenInput = {
-  url: string;
-};
+import { ShortenURLDto } from './shortener.dtos';
 
 @Controller()
 export class ShortenerController {
@@ -28,7 +25,7 @@ export class ShortenerController {
   }
 
   @Post('/url')
-  async shorten(@Body() input: ShortenInput) {
+  async shorten(@Body() input: ShortenURLDto) {
     const generated = this.shortenerService.generateURL();
 
     await this.shortenerRepository.create({
