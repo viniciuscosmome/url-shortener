@@ -7,6 +7,11 @@ type CreateUserExpect = {
   password: string;
 };
 
+type GetUserResponse = {
+  id: string;
+  password: string;
+};
+
 @Injectable()
 export class UserRepository {
   constructor(private prismaService: PrismaService) {}
@@ -20,5 +25,22 @@ export class UserRepository {
         },
       })
       .catch(handleDatabaseError);
+  }
+
+  async getUserByEmail(email: string): Promise<GetUserResponse | undefined> {
+    const user = await this.prismaService.user
+      .findUnique({
+        where: {
+          email,
+        },
+        select: {
+          id: true,
+          password: true,
+        },
+      })
+      .then((result) => result)
+      .catch(handleDatabaseError);
+
+    return user as GetUserResponse;
   }
 }

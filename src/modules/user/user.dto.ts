@@ -1,3 +1,4 @@
+import { PickType } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
@@ -5,7 +6,7 @@ import {
   IsStrongPassword,
 } from 'class-validator';
 
-export class CreateUserExpect {
+export class SignUpExpect {
   @IsNotEmpty({ message: 'Este campo não pode estar vazio' })
   @IsEmail(undefined, { message: 'O e-mail tem um formato inválido' })
   email: string;
@@ -18,3 +19,8 @@ export class CreateUserExpect {
   })
   password: string;
 }
+
+export class SignInExpect extends PickType(SignUpExpect, [
+  'email',
+  'password',
+]) {}
