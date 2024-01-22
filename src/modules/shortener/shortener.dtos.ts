@@ -1,22 +1,16 @@
 import { PickType } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, IsUrl, Matches } from 'class-validator';
+import { SHORT_URL_REGEX } from 'src/global/constants';
+import { responses } from 'src/global/errors/validation-responses';
 
 class BaseUrlDto {
-  @IsNotEmpty({ message: 'Este campo não pode estar vazio' })
-  @IsString({ message: 'Este valor deve ser um TEXTO' })
-  @IsUrl(
-    {
-      protocols: ['http', 'https'],
-    },
-    {
-      message: 'Não é uma URL válida',
-    },
-  )
+  @IsNotEmpty({ message: responses.notEmpty })
+  @IsString({ message: responses.string })
+  @IsUrl(undefined, { message: responses.URL })
   url: string;
 
-  @Matches(/^[a-zA-Z0-9]{6}$/, {
-    message: 'Verifique o formato do link informado.',
-  })
+  @IsNotEmpty({ message: responses.notEmpty })
+  @Matches(SHORT_URL_REGEX, { message: responses.shortURL })
   shortURL: string;
 }
 
