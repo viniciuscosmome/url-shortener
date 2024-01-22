@@ -4,6 +4,10 @@ import type { GenerateShortURLResponse } from './shortener.types';
 
 @Injectable()
 export class ShortenerService {
+  formatShortUrl(code: string): string {
+    return DESTINE_APLICATION_REDIR_URL.concat(code);
+  }
+
   generateShortURL(): GenerateShortURLResponse {
     const alphanumeric =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789';
@@ -14,7 +18,7 @@ export class ShortenerService {
       id += alphanumeric[randomPos];
     }
 
-    const shortURL = DESTINE_APLICATION_REDIR_URL.concat(id);
+    const shortURL = this.formatShortUrl(id);
 
     return { id, shortURL };
   }

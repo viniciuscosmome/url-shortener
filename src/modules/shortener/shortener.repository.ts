@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/lib/prisma/prisma.service';
 import { handleDatabaseError } from 'src/global/errors/database.errors';
-import type { CreateShortURLExpect } from './shortener.types';
+import type {
+  CreateShortURLExpect,
+  UpdateOriginExpect,
+  UpdateOrignResponse,
+} from './shortener.types';
 
 @Injectable()
 export class ShortenerRepository {
@@ -88,5 +92,30 @@ export class ShortenerRepository {
         },
       })
       .catch(handleDatabaseError);
+  }
+
+  async updateDestineByCode(
+    input: UpdateOriginExpect,
+  ): Promise<UpdateOrignResponse | void> {
+    const info = await this.prismaService.shortURL
+      .update({
+        where: {
+          userId: input.userId,
+          shortURL: input.shortURL,
+          deletedAt: null,
+        },
+        data: {
+          origin: input.origin,
+        },
+        select: {
+          shortURL: true,
+          origin: true,
+          views: true,
+        },
+      })
+      .then((response) => response)
+      .catch(handleDatabaseError);
+
+    return info;
   }
 }

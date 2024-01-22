@@ -9,8 +9,18 @@ export type GenerateShortURLResponse = {
   shortURL: string;
 };
 
-export type GetAllUrlsByUserIdResponse = Array<{
+type shortUTLInfo = {
   shortURL: string;
   origin: string;
   views: number;
-}>;
+};
+
+export type GetAllUrlsByUserIdResponse = Array<shortUTLInfo>;
+
+export type UpdateOriginExpect = {
+  userId: string;
+  shortURL: string;
+  origin: string;
+};
+
+export type UpdateOrignResponse = shortUTLInfo;

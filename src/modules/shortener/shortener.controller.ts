@@ -8,6 +8,7 @@ import {
   UseGuards,
   Req,
   Delete,
+  Patch,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ShortenerRepository } from './shortener.repository';
@@ -16,6 +17,7 @@ import {
   ShortenURLDto,
   RedirectByShortURLDto,
   DeleteUserUrlDto,
+  UpdateShortUrlDto,
 } from './shortener.dtos';
 import { AuthGuard } from 'src/guard/auth.guard';
 import { Permission } from 'src/guard/auth.decorator';
@@ -36,7 +38,7 @@ export class ShortenerController {
   @UseGuards(AuthGuard)
   @Permission({ type: 'access', optional: true })
   @Post('/url')
-  @ApiTags('URL')
+  @ApiTags('Manipulação de URL')
   @ApiOperation({ summary: 'Encurta a URL fornecida' })
   async shorten(@Req() req: Request, @Body() input: ShortenURLDto) {
     const payload = req[SESSION_PAYLOAD_KEY] as JwtPayload;
@@ -59,7 +61,7 @@ export class ShortenerController {
   @UseGuards(AuthGuard)
   @Permission({ type: 'access' })
   @Get('/url')
-  @ApiTags('URL')
+  @ApiTags('Manipulação de URL')
   @ApiOperation({ summary: 'Lista todas as URLs do usuário' })
   async getAllUrls(@Req() req: Request) {
     const { uid } = req[SESSION_PAYLOAD_KEY];
@@ -73,8 +75,35 @@ export class ShortenerController {
 
   @UseGuards(AuthGuard)
   @Permission({ type: 'access' })
+  @Patch('/url')
+  @ApiTags('Manipulação de URL')
+  @ApiOperation({ summary: 'Atualiza o destino de uma URL encurtada' })
+  async updateDestine(@Req() req: Request, @Body() input: UpdateShortUrlDto) {
+    const { uid } = req[SESSION_PAYLOAD_KEY];
+    const { shortURL, url } = input;
+
+    const updatedInfo = await this.shortenerRepository.updateDestineByCode({
+      shortURL: shortURL,
+      userId: uid,
+      origin: url,
+    });
+
+    if (updatedInfo) {
+      updatedInfo.shortURL = this.shortenerService.formatShortUrl(
+        updatedInfo.shortURL,
+      );
+    }
+
+    return {
+      message: 'O destino da URL encurtada foi alterado',
+      updatedInfo,
+    };
+  }
+
+  @UseGuards(AuthGuard)
+  @Permission({ type: 'access' })
   @Delete('/url/:shortURL')
-  @ApiTags('URL')
+  @ApiTags('Manipulação de URL')
   @ApiOperation({ summary: 'Exclui uma URL do usuário' })
   async excludeUrl(@Req() req: Request, @Param() params: DeleteUserUrlDto) {
     const { uid } = req[SESSION_PAYLOAD_KEY];
