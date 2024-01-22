@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import type { GenerateURLResponse } from './shortener.types';
+import { DESTINE_APLICATION_REDIR_URL } from 'src/shared/constants';
+import type { GenerateShortURLResponse } from './shortener.types';
 
 @Injectable()
 export class ShortenerService {
-  generateURL(): GenerateURLResponse {
+  generateShortURL(): GenerateShortURLResponse {
     const alphanumeric =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789';
     let id = '';
@@ -13,7 +14,7 @@ export class ShortenerService {
       id += alphanumeric[randomPos];
     }
 
-    const shortURL = 'http://localhost:3000/'.concat(id);
+    const shortURL = DESTINE_APLICATION_REDIR_URL.concat(id);
 
     return { id, shortURL };
   }

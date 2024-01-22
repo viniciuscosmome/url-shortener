@@ -11,7 +11,7 @@ import {
 import { Request, Response } from 'express';
 import { ShortenerRepository } from './shortener.repository';
 import { ShortenerService } from './shortener.service';
-import { ShortenURLDto, RedirectByURLIdDto } from './shortener.dtos';
+import { ShortenURLDto, RedirectByShortURLDto } from './shortener.dtos';
 import { AuthGuard } from 'src/guard/auth.guard';
 import { Permission } from 'src/guard/auth.decorator';
 import { SESSION_PAYLOAD_KEY } from 'src/shared/constants';
@@ -24,10 +24,10 @@ export class ShortenerController {
     private shortenerService: ShortenerService,
   ) {}
 
-  @Get('/:URLId')
-  async redirect(@Param() params: RedirectByURLIdDto, @Res() res: Response) {
-    const origin = await this.shortenerRepository.getOriginByURLId(
-      params.URLId,
+  @Get('/:shortURL')
+  async redirect(@Param() params: RedirectByShortURLDto, @Res() res: Response) {
+    const origin = await this.shortenerRepository.getOriginByShortURL(
+      params.shortURL,
     );
 
     if (origin) {
@@ -38,20 +38,21 @@ export class ShortenerController {
   }
 
   @UseGuards(AuthGuard)
-  @Permission({ type: 'access' })
+  @Permission({ type: 'access', optional: true })
   @Post('/url')
   async shorten(@Req() req: Request, @Body() input: ShortenURLDto) {
     const payload = req[SESSION_PAYLOAD_KEY] as JwtPayload;
-    const generated = this.shortenerService.generateURL();
+    const generated = this.shortenerService.generateShortURL();
 
-    await this.shortenerRepository.create({
-      id: generated.id,
+    const id = await this.shortenerRepository.create({
+      shortURL: generated.id,
       origin: input.url,
       userId: payload?.uid,
     });
 
     return {
       message: 'URL encurtada!',
+      id: id,
       shortURL: generated.shortURL,
       originalURL: input.url,
     };

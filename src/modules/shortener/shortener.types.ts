@@ -1,10 +1,10 @@
-export type CreateShortURLInput = {
-  id: string;
+export type CreateShortURLExpect = {
+  shortURL: string;
   origin: string;
   userId?: string | undefined;
 };
 
-export type GenerateURLResponse = {
+export type GenerateShortURLResponse = {
   id: string;
   shortURL: string;
 };

@@ -14,9 +14,9 @@ export class ShortenURLDto {
   url: string;
 }
 
-export class RedirectByURLIdDto {
+export class RedirectByShortURLDto {
   @Matches(/^[a-zA-Z0-9]{6}$/, {
     message: 'Verifique o formato do link informado.',
   })
-  URLId: string;
+  shortURL: string;
 }
