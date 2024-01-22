@@ -7,11 +7,16 @@ import {
   Res,
   UseGuards,
   Req,
+  Delete,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ShortenerRepository } from './shortener.repository';
 import { ShortenerService } from './shortener.service';
-import { ShortenURLDto, RedirectByShortURLDto } from './shortener.dtos';
+import {
+  ShortenURLDto,
+  RedirectByShortURLDto,
+  DeleteUserUrlDto,
+} from './shortener.dtos';
 import { AuthGuard } from 'src/guard/auth.guard';
 import { Permission } from 'src/guard/auth.decorator';
 import {
@@ -59,6 +64,23 @@ export class ShortenerController {
       baseRedirectURL: DESTINE_APLICATION_REDIR_URL,
       urls,
     };
+  }
+
+  @UseGuards(AuthGuard)
+  @Permission({ type: 'access' })
+  @Delete('/url/:shortURL')
+  async excludeUrl(@Req() req: Request, @Param() params: DeleteUserUrlDto) {
+    const { uid } = req[SESSION_PAYLOAD_KEY];
+    const shortURL = params.shortURL;
+    const now = new Date();
+
+    await this.shortenerRepository.deleteUserUrlByCode({
+      shortURL,
+      now,
+      userId: uid,
+    });
+
+    return { message: 'A URL encurtada foi deletada' };
   }
 
   @Get('/:shortURL')

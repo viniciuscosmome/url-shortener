@@ -1,3 +1,4 @@
+import { PickType } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, IsUrl, Matches } from 'class-validator';
 
 export class ShortenURLDto {
@@ -20,3 +21,7 @@ export class RedirectByShortURLDto {
   })
   shortURL: string;
 }
+
+export class DeleteUserUrlDto extends PickType(RedirectByShortURLDto, [
+  'shortURL',
+]) {}

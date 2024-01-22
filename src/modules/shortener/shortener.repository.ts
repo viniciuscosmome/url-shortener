@@ -71,4 +71,22 @@ export class ShortenerRepository {
 
     return result;
   }
+
+  async deleteUserUrlByCode(input: {
+    userId: string;
+    now: Date;
+    shortURL: string;
+  }) {
+    await this.prismaService.shortURL
+      .update({
+        where: {
+          shortURL: input.shortURL,
+          userId: input.userId,
+        },
+        data: {
+          deletedAt: input.now,
+        },
+      })
+      .catch(handleDatabaseError);
+  }
 }
