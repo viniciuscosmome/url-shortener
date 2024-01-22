@@ -24,3 +24,8 @@ export type UpdateOriginExpect = {
 };
 
 export type UpdateOrignResponse = shortUTLInfo;
+
+export type ShortUrlIsFromThisUserExpect = {
+  shortURL: string;
+  userId: string;
+};

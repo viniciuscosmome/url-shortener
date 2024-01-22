@@ -3,6 +3,7 @@ import { PrismaService } from 'src/lib/prisma/prisma.service';
 import { handleDatabaseError } from 'src/global/errors/database.errors';
 import type {
   CreateShortURLExpect,
+  ShortUrlIsFromThisUserExpect,
   UpdateOriginExpect,
   UpdateOrignResponse,
 } from './shortener.types';
@@ -118,5 +119,25 @@ export class ShortenerRepository {
       .catch(handleDatabaseError);
 
     return info;
+  }
+
+  async shortUrlIsFromThisUser(
+    input: ShortUrlIsFromThisUserExpect,
+  ): Promise<boolean | void> {
+    const result = await this.prismaService.shortURL
+      .findUnique({
+        where: {
+          shortURL: input.shortURL,
+          userId: input.userId,
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+        },
+      })
+      .then((response) => !!response)
+      .catch(handleDatabaseError);
+
+    return result;
   }
 }

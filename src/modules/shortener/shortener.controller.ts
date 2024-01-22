@@ -9,6 +9,7 @@ import {
   Req,
   Delete,
   Patch,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ShortenerRepository } from './shortener.repository';
@@ -82,6 +83,18 @@ export class ShortenerController {
     const { uid } = req[SESSION_PAYLOAD_KEY];
     const { shortURL, url } = input;
 
+    const isFromThisUser =
+      await this.shortenerRepository.shortUrlIsFromThisUser({
+        shortURL: shortURL,
+        userId: uid,
+      });
+
+    if (!isFromThisUser) {
+      throw new UnprocessableEntityException(
+        'A URL encurtada não pode ser processada',
+      );
+    }
+
     const updatedInfo = await this.shortenerRepository.updateDestineByCode({
       shortURL: shortURL,
       userId: uid,
@@ -108,6 +121,19 @@ export class ShortenerController {
   async excludeUrl(@Req() req: Request, @Param() params: DeleteUserUrlDto) {
     const { uid } = req[SESSION_PAYLOAD_KEY];
     const shortURL = params.shortURL;
+
+    const isFromThisUser =
+      await this.shortenerRepository.shortUrlIsFromThisUser({
+        shortURL: shortURL,
+        userId: uid,
+      });
+
+    if (!isFromThisUser) {
+      throw new UnprocessableEntityException(
+        'A URL encurtada não pode ser processada',
+      );
+    }
+
     const now = new Date();
 
     await this.shortenerRepository.deleteUserUrlByCode({
