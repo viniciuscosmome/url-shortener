@@ -1,15 +1,11 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { GUARD_KEY } from './auth.decorator';
 import type { GuardMetadata } from './auth.types';
 import { SESSION_PAYLOAD_KEY } from 'src/global/constants';
+import { handleErrorsJwt } from 'src/lib/jwt/jwt.errors';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -32,18 +28,14 @@ export class AuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
 
     if (!token && !guardMetadata.optional) {
-      throw new UnauthorizedException('Um token de acesso é necessário');
+      handleErrorsJwt();
     }
 
     if (token) {
       const payload = await this.jwtService
         .verifyAsync(token)
         .then((payload) => payload)
-        .catch((error) => {
-          if (error) {
-            throw new UnauthorizedException('Token de acesso inválido');
-          }
-        });
+        .catch(handleErrorsJwt);
 
       if (payload) {
         request[SESSION_PAYLOAD_KEY] = payload;
