@@ -12,8 +12,8 @@ import type {
 export class ShortenerRepository {
   constructor(private prismaService: PrismaService) {}
 
-  async create(input: CreateShortURLExpect): Promise<string | void> {
-    const id = await this.prismaService.shortURL
+  async create(input: CreateShortURLExpect): Promise<void> {
+    await this.prismaService.shortURL
       .create({
         data: {
           shortURL: input.shortURL,
@@ -26,8 +26,6 @@ export class ShortenerRepository {
       })
       .then((response) => response.id)
       .catch(handleDatabaseError);
-
-    return id;
   }
 
   async getOriginByShortURL(shortURL: string): Promise<string | void> {

@@ -1,14 +1,12 @@
-import {
-  Body,
-  Controller,
-  Post,
-  UnauthorizedException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SignInDto, SignUpDto } from './user.dto';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
+import {
+  InvalidCredentials,
+  UserAlreadyExists,
+} from 'src/global/errors/general.errors';
 
 @Controller('/auth')
 @ApiTags('Autenticação')
@@ -26,7 +24,7 @@ export class UserController {
     );
 
     if (userExists) {
-      throw new UnprocessableEntityException('Este usuário já está cadastrado');
+      throw new UserAlreadyExists();
     }
 
     const hashedPassword = await this.userService.hashPassword(input.password);
@@ -43,7 +41,7 @@ export class UserController {
     const user = await this.userRepository.getUserByEmail(input.email);
 
     if (!user) {
-      throw new UnauthorizedException('Credenciais inválidas');
+      throw new InvalidCredentials();
     }
 
     const isValidCredential = await this.userService.validatePassword({
@@ -52,7 +50,7 @@ export class UserController {
     });
 
     if (!isValidCredential) {
-      throw new UnauthorizedException('Credenciais inválidas');
+      throw new InvalidCredentials();
     }
 
     delete user.password;

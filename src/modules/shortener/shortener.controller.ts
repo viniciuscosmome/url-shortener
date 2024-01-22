@@ -9,9 +9,9 @@ import {
   Req,
   Delete,
   Patch,
-  UnprocessableEntityException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ShortenerRepository } from './shortener.repository';
 import { ShortenerService } from './shortener.service';
 import {
@@ -27,7 +27,10 @@ import {
   SESSION_PAYLOAD_KEY,
 } from 'src/global/constants';
 import type { JwtPayload } from 'src/lib/jwt/jwt.types';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  DataNotFound,
+  UrlIsNotFromThisUser,
+} from 'src/global/errors/general.errors';
 
 @Controller()
 export class ShortenerController {
@@ -45,7 +48,7 @@ export class ShortenerController {
     const payload = req[SESSION_PAYLOAD_KEY] as JwtPayload;
     const generated = this.shortenerService.generateShortURL();
 
-    const id = await this.shortenerRepository.create({
+    await this.shortenerRepository.create({
       shortURL: generated.id,
       origin: input.url,
       userId: payload?.uid,
@@ -53,7 +56,6 @@ export class ShortenerController {
 
     return {
       message: 'URL encurtada!',
-      id: id,
       shortURL: generated.shortURL,
       originalURL: input.url,
     };
@@ -90,9 +92,7 @@ export class ShortenerController {
       });
 
     if (!isFromThisUser) {
-      throw new UnprocessableEntityException(
-        'A URL encurtada não pode ser processada',
-      );
+      throw new UrlIsNotFromThisUser();
     }
 
     const updatedInfo = await this.shortenerRepository.updateDestineByCode({
@@ -129,9 +129,7 @@ export class ShortenerController {
       });
 
     if (!isFromThisUser) {
-      throw new UnprocessableEntityException(
-        'A URL encurtada não pode ser processada',
-      );
+      throw new UrlIsNotFromThisUser();
     }
 
     const now = new Date();
@@ -153,10 +151,10 @@ export class ShortenerController {
       params.shortURL,
     );
 
-    if (origin) {
-      return res.redirect(origin);
+    if (!origin) {
+      throw new DataNotFound();
     }
 
-    return res.status(404).json({ message: 'Nenhum registro encontrado!' });
+    return res.redirect(origin);
   }
 }
