@@ -14,28 +14,18 @@ import { ShortenerService } from './shortener.service';
 import { ShortenURLDto, RedirectByShortURLDto } from './shortener.dtos';
 import { AuthGuard } from 'src/guard/auth.guard';
 import { Permission } from 'src/guard/auth.decorator';
-import { SESSION_PAYLOAD_KEY } from 'src/shared/constants';
+import {
+  DESTINE_APLICATION_REDIR_URL,
+  SESSION_PAYLOAD_KEY,
+} from 'src/shared/constants';
 import type { JwtPayload } from 'src/lib/jwt/jwt.types';
 
-@Controller()
+@Controller('')
 export class ShortenerController {
   constructor(
     private shortenerRepository: ShortenerRepository,
     private shortenerService: ShortenerService,
   ) {}
-
-  @Get('/:shortURL')
-  async redirect(@Param() params: RedirectByShortURLDto, @Res() res: Response) {
-    const origin = await this.shortenerRepository.getOriginByShortURL(
-      params.shortURL,
-    );
-
-    if (origin) {
-      return res.redirect(origin);
-    }
-
-    return res.status(404).json({ message: 'Nenhum registro encontrado!' });
-  }
 
   @UseGuards(AuthGuard)
   @Permission({ type: 'access', optional: true })
@@ -56,5 +46,31 @@ export class ShortenerController {
       shortURL: generated.shortURL,
       originalURL: input.url,
     };
+  }
+
+  @UseGuards(AuthGuard)
+  @Permission({ type: 'access' })
+  @Get('/url')
+  async getAllUrls(@Req() req: Request) {
+    const { uid } = req[SESSION_PAYLOAD_KEY];
+    const urls = await this.shortenerRepository.getAllUrlsByUserId(uid);
+
+    return {
+      baseRedirectURL: DESTINE_APLICATION_REDIR_URL,
+      urls,
+    };
+  }
+
+  @Get('/:shortURL')
+  async redirect(@Param() params: RedirectByShortURLDto, @Res() res: Response) {
+    const origin = await this.shortenerRepository.getOriginByShortURL(
+      params.shortURL,
+    );
+
+    if (origin) {
+      return res.redirect(origin);
+    }
+
+    return res.status(404).json({ message: 'Nenhum registro encontrado!' });
   }
 }

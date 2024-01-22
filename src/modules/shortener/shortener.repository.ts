@@ -52,4 +52,23 @@ export class ShortenerRepository {
 
     return origin;
   }
+
+  async getAllUrlsByUserId(userId: string) {
+    const result = await this.prismaService.shortURL
+      .findMany({
+        where: {
+          userId: userId,
+          deletedAt: null,
+        },
+        select: {
+          shortURL: true,
+          origin: true,
+          views: true,
+        },
+      })
+      .then((response) => response)
+      .catch(handleDatabaseError);
+
+    return result;
+  }
 }
