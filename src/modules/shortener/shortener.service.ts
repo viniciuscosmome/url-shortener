@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-
-type GenerateURLResponse = {
-  id: string;
-  shortURL: string;
-};
+import type { GenerateURLResponse } from './shortener.types';
 
 @Injectable()
 export class ShortenerService {

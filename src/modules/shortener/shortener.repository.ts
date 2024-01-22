@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/lib/prisma/prisma.service';
 import { handleDatabaseError } from 'src/shared/errors/handler-database.errors';
-
-type CreateShortURLInput = {
-  id: string;
-  origin: string;
-  userId?: string | undefined;
-};
+import type { CreateShortURLInput } from './shortener.types';
 
 @Injectable()
 export class ShortenerRepository {
