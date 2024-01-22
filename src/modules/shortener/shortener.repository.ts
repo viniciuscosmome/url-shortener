@@ -18,6 +18,7 @@ export class ShortenerRepository {
         data: {
           id: input.id,
           origin: input.origin,
+          userId: input.userId,
         },
       })
       .catch(handleDatabaseError);

@@ -1,8 +1,21 @@
-import { Controller, Post, Body, Get, Param, Res } from '@nestjs/common';
-import { Response } from 'express';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Res,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
 import { ShortenerRepository } from './shortener.repository';
 import { ShortenerService } from './shortener.service';
 import { ShortenURLDto, RedirectByURLIdDto } from './shortener.dtos';
+import { AuthGuard } from 'src/guard/auth.guard';
+import { Permission } from 'src/guard/auth.decorator';
+import { SESSION_PAYLOAD_KEY } from 'src/shared/constants';
+import type { JwtPayload } from 'src/lib/jwt/jwt.types';
 
 @Controller()
 export class ShortenerController {
@@ -24,13 +37,17 @@ export class ShortenerController {
     return res.status(404).json({ message: 'Nenhum registro encontrado!' });
   }
 
+  @UseGuards(AuthGuard)
+  @Permission({ type: 'access' })
   @Post('/url')
-  async shorten(@Body() input: ShortenURLDto) {
+  async shorten(@Req() req: Request, @Body() input: ShortenURLDto) {
+    const payload = req[SESSION_PAYLOAD_KEY] as JwtPayload;
     const generated = this.shortenerService.generateURL();
 
     await this.shortenerRepository.create({
       id: generated.id,
       origin: input.url,
+      userId: payload?.uid,
     });
 
     return {
