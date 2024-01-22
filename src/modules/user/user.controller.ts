@@ -1,4 +1,10 @@
-import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UnauthorizedException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SignInDto, SignUpDto } from './user.dto';
 import { UserRepository } from './user.repository';
@@ -15,6 +21,14 @@ export class UserController {
   @Post('/sign-up')
   @ApiOperation({ summary: 'Cria uma nova conta' })
   async signUp(@Body() input: SignUpDto) {
+    const userExists = await this.userRepository.userEmailAlreadyExists(
+      input.email,
+    );
+
+    if (userExists) {
+      throw new UnprocessableEntityException('Este usuário já está cadastrado');
+    }
+
     const hashedPassword = await this.userService.hashPassword(input.password);
 
     await this.userRepository.create({
@@ -34,7 +48,7 @@ export class UserController {
 
     const isValidCredential = await this.userService.validatePassword({
       inputPassword: input.password,
-      userPassword: user?.password,
+      userPassword: user.password,
     });
 
     if (!isValidCredential) {

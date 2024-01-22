@@ -34,4 +34,20 @@ export class UserRepository {
 
     return user as GetUserResponse;
   }
+
+  async userEmailAlreadyExists(email: string): Promise<boolean | void> {
+    const result = await this.prismaService.user
+      .findUnique({
+        where: {
+          email,
+        },
+        select: {
+          id: true,
+        },
+      })
+      .then((response) => !!response)
+      .catch(handleDatabaseError);
+
+    return result;
+  }
 }
