@@ -86,6 +86,7 @@ export class ShortenerRepository {
         where: {
           shortURL: input.shortURL,
           userId: input.userId,
+          deletedAt: null,
         },
         data: {
           deletedAt: input.now,
