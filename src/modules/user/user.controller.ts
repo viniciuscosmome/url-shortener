@@ -1,9 +1,11 @@
 import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SignInDto, SignUpDto } from './user.dto';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
 
 @Controller('/auth')
+@ApiTags('Autenticação')
 export class UserController {
   constructor(
     private userRepository: UserRepository,
@@ -11,6 +13,7 @@ export class UserController {
   ) {}
 
   @Post('/sign-up')
+  @ApiOperation({ summary: 'Cria uma nova conta' })
   async signUp(@Body() input: SignUpDto) {
     const hashedPassword = await this.userService.hashPassword(input.password);
 
@@ -21,6 +24,7 @@ export class UserController {
   }
 
   @Post('/sign-in')
+  @ApiOperation({ summary: 'Acessa sua conta' })
   async signIn(@Body() input: SignInDto) {
     const user = await this.userRepository.getUserByEmail(input.email);
 
