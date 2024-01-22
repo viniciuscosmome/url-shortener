@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
-import { SignUpExpect, SignInExpect } from './user.dto';
+import { SignInDto, SignUpDto } from './user.dto';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
 
@@ -11,7 +11,7 @@ export class UserController {
   ) {}
 
   @Post('/sign-up')
-  async signUp(@Body() input: SignUpExpect) {
+  async signUp(@Body() input: SignUpDto) {
     const hashedPassword = await this.userService.hashPassword(input.password);
 
     await this.userRepository.create({
@@ -21,7 +21,7 @@ export class UserController {
   }
 
   @Post('/sign-in')
-  async signIn(@Body() input: SignInExpect) {
+  async signIn(@Body() input: SignInDto) {
     const user = await this.userRepository.getUserByEmail(input.email);
 
     if (!user) {

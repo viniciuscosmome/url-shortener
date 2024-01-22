@@ -6,7 +6,7 @@ import {
   IsStrongPassword,
 } from 'class-validator';
 
-export class SignUpExpect {
+export class SignUpDto {
   @IsNotEmpty({ message: 'Este campo não pode estar vazio' })
   @IsEmail(undefined, { message: 'O e-mail tem um formato inválido' })
   email: string;
@@ -20,7 +20,4 @@ export class SignUpExpect {
   password: string;
 }
 
-export class SignInExpect extends PickType(SignUpExpect, [
-  'email',
-  'password',
-]) {}
+export class SignInDto extends PickType(SignUpDto, ['email', 'password']) {}
