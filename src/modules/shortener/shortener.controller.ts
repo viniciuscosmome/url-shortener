@@ -22,12 +22,11 @@ import { Permission } from 'src/guard/auth.decorator';
 import {
   DESTINE_APLICATION_REDIR_URL,
   SESSION_PAYLOAD_KEY,
-} from 'src/shared/constants';
+} from 'src/global/constants';
 import type { JwtPayload } from 'src/lib/jwt/jwt.types';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-@Controller('')
-@ApiTags('URL')
+@Controller()
 export class ShortenerController {
   constructor(
     private shortenerRepository: ShortenerRepository,
@@ -37,6 +36,7 @@ export class ShortenerController {
   @UseGuards(AuthGuard)
   @Permission({ type: 'access', optional: true })
   @Post('/url')
+  @ApiTags('URL')
   @ApiOperation({ summary: 'Encurta a URL fornecida' })
   async shorten(@Req() req: Request, @Body() input: ShortenURLDto) {
     const payload = req[SESSION_PAYLOAD_KEY] as JwtPayload;
@@ -59,6 +59,7 @@ export class ShortenerController {
   @UseGuards(AuthGuard)
   @Permission({ type: 'access' })
   @Get('/url')
+  @ApiTags('URL')
   @ApiOperation({ summary: 'Lista todas as URLs do usuário' })
   async getAllUrls(@Req() req: Request) {
     const { uid } = req[SESSION_PAYLOAD_KEY];
@@ -73,6 +74,7 @@ export class ShortenerController {
   @UseGuards(AuthGuard)
   @Permission({ type: 'access' })
   @Delete('/url/:shortURL')
+  @ApiTags('URL')
   @ApiOperation({ summary: 'Exclui uma URL do usuário' })
   async excludeUrl(@Req() req: Request, @Param() params: DeleteUserUrlDto) {
     const { uid } = req[SESSION_PAYLOAD_KEY];
@@ -89,6 +91,7 @@ export class ShortenerController {
   }
 
   @Get('/:shortURL')
+  @ApiTags('Redirecionamento')
   @ApiOperation({ summary: 'Redireciona o cliente para a URL de origem' })
   async redirect(@Param() params: RedirectByShortURLDto, @Res() res: Response) {
     const origin = await this.shortenerRepository.getOriginByShortURL(

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DESTINE_APLICATION_REDIR_URL } from 'src/shared/constants';
+import { DESTINE_APLICATION_REDIR_URL } from 'src/global/constants';
 import type { GenerateShortURLResponse } from './shortener.types';
 
 @Injectable()

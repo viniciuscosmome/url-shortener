@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/lib/prisma/prisma.service';
-import { handleDatabaseError } from 'src/shared/errors/handler-database.errors';
+import { handleDatabaseError } from 'src/global/errors/database.errors';
 import type { CreateShortURLExpect } from './shortener.types';
 
 @Injectable()
