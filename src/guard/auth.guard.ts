@@ -32,8 +32,9 @@ export class AuthGuard implements CanActivate {
     }
 
     if (token) {
+      const jwtOptions = { subject: guardMetadata.type };
       const payload = await this.jwtService
-        .verifyAsync(token)
+        .verifyAsync(token, jwtOptions)
         .then((payload) => payload)
         .catch(handleErrorsJwt);
 
