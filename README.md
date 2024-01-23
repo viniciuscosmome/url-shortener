@@ -1,8 +1,22 @@
 # Encurtador de URLs
 
+<details>
+  <summary>Índice</summary>
+
+1. [Requisitos](#requisitos)
+1. [Configurando variáveis de ambiente](#configurando-variáveis-de-ambiente)
+1. [Instalando as dependências](#instalando-as-dependências)
+1. [Executando a aplicação de desenvolvimento](#executando-a-aplicação-de-desenvolvimento)
+   - [Preparando o banco de dados](#preparando-o-banco-de-dados)
+   - [Iniciando a aplicação](#iniciando-a-aplicação)
+1. [licença](#licença)
+
+</details>
+
 ## Requisitos
 
 1. [Node.js - v20.11](https://nodejs.org/en) LTS - última versão estável hoje
+2. Um editor de código de sua preferência
 
 ### Clonando o repositório
 
@@ -15,7 +29,9 @@ Use o comando abaixo para clonar este repositório.
 git clone https://github.com/viniciuscosmome/url-shortener.git
 ```
 
-## Configure as variáveis de ambiente
+Após clonar o repositório, acesse a pasta criada (url-shortener) com seu editor de código
+
+## configurando variáveis de ambiente
 
 O arquivo `.env.example` tem uma cópia das variáveis de ambiente necessárias com valores de exemplo.
 
@@ -44,7 +60,7 @@ JWT_SECRET=super-secret-password
 DATABASE_PATH="file:./database/url-shortener.db"
 ```
 
-## Instale as dependências
+## Instalando as dependências
 
 O comando abaixo vai baixar todas as dependencias do projeto para você rodar localmente.
 
@@ -54,9 +70,9 @@ O atributo "--exact" garante que você baixe a versão atual dos pacotes utiliza
 npm install --exact
 ```
 
-## Executando a aplicação
+## Executando a aplicação de desenvolvimento
 
-### Ambiente de desenvolvimento
+### Preparando o banco de dados
 
 Executa as migrações da base de dados e gera o arquivo `@prisma/client`
 
@@ -66,7 +82,7 @@ npm run prisma:setup:dev
 npx prisma migrate dev && npx prisma generate
 ```
 
-Inicie a aplicação de desenvolvimento
+### Iniciando a aplicação
 
 ```bash
 # Ambiente de desenvolvimento
