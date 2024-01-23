@@ -6,6 +6,10 @@ export const documentBuilder = new DocumentBuilder()
     'Api desenvolvida para encurtar urls e exibir quantidade de cliques',
   )
   .setVersion('0.0.1')
+  .setLicense(
+    'Licença MIT',
+    'https://github.com/viniciuscosmome/url-shortener/blob/main/LICENSE',
+  )
   .addBearerAuth(
     {
       type: 'http',
