@@ -9,6 +9,7 @@
 1. [Executando a aplicação de desenvolvimento](#executando-a-aplicação-de-desenvolvimento)
    - [Preparando o banco de dados](#preparando-o-banco-de-dados)
    - [Iniciando a aplicação](#iniciando-a-aplicação)
+1. [Documentação com o Swagger](#documentação-com-o-swagger)
 1. [licença](#licença)
 
 </details>
@@ -90,6 +91,14 @@ npm run start
 
 # Ambiente de desenvolvimento ('watch' mode)
 npm run start:dev
+```
+
+## Documentação com o Swagger
+
+Após a inicialização da API uma documentação estará disponível na rota `/docs`
+
+```md
+http://localhost:3000/docs
 ```
 
 ## Licença
