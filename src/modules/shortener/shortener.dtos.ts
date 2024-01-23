@@ -8,18 +8,20 @@ class BaseUrlDto {
   @IsString({ message: responses.string })
   @IsUrl(undefined, { message: responses.URL })
   @ApiProperty({ example: 'https://google.com' })
-  url: string;
+  destinationUrl: string;
 
   @IsNotEmpty({ message: responses.notEmpty })
-  @Matches(SHORT_URL_REGEX, { message: responses.shortURL })
-  @ApiProperty({ example: 'Aut2Eh' })
-  shortURL: string;
+  @Matches(SHORT_URL_REGEX, { message: responses.shortUrl })
+  @ApiProperty({ example: 'A8CD3F' })
+  shortUrlCode: string;
 }
 
-export class ShortenURLDto extends PickType(BaseUrlDto, ['url']) {}
+export class ShortenUrlDto extends PickType(BaseUrlDto, ['destinationUrl']) {}
 
-export class RedirectByShortURLDto extends PickType(BaseUrlDto, ['shortURL']) {}
+export class RedirectByShortUrlCodeDto extends PickType(BaseUrlDto, [
+  'shortUrlCode',
+]) {}
 
-export class DeleteUserUrlDto extends PickType(BaseUrlDto, ['shortURL']) {}
+export class DeleteUserUrlDto extends PickType(BaseUrlDto, ['shortUrlCode']) {}
 
-export class UpdateShortUrlDto extends BaseUrlDto {}
+export class UpdateDestinationUrlDto extends BaseUrlDto {}

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DESTINE_APLICATION_REDIR_URL } from 'src/global/constants';
-import type { GenerateShortURLResponse } from './shortener.types';
+import type { GenerateShortUrlCodeResponse } from './shortener.types';
 
 @Injectable()
 export class ShortenerService {
@@ -8,18 +8,18 @@ export class ShortenerService {
     return DESTINE_APLICATION_REDIR_URL.concat(code);
   }
 
-  generateShortURL(): GenerateShortURLResponse {
+  generateShortUrlCode(): GenerateShortUrlCodeResponse {
     const alphanumeric =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789';
-    let id = '';
+    let code = '';
 
     for (let count = 0; count < 6; count++) {
       const randomPos = Math.floor(Math.random() * alphanumeric.length);
-      id += alphanumeric[randomPos];
+      code += alphanumeric[randomPos];
     }
 
-    const shortURL = this.formatShortUrl(id);
+    const shortUrl = this.formatShortUrl(code);
 
-    return { id, shortURL };
+    return { code, shortUrl };
   }
 }

@@ -4,30 +4,30 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./local-db/shortener-url.db"
+  url      = env("DATABASE_PATH")
 }
 
 model User {
-  id String @id @default(uuid())
-  email String @unique
-  password String
-  urls ShortURL[]
-  updatedAt DateTime @updatedAt @map("updated_at")
-  createdAt DateTime @default(now()) @map("created_at")
+  id        String     @id @default(uuid())
+  email     String     @unique
+  password  String
+  urls      ShortUrl[]
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  createdAt DateTime   @default(now()) @map("created_at")
 
   @@map("users")
 }
 
-model ShortURL {
-  id String @id @default(uuid())
-  shortURL String @unique @map("short_url")
-  origin String
-  views Int @default(0)
-  userId String? @map("user_id")
-  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+model ShortUrl {
+  id        Int       @id @default(autoincrement())
+  code      String    @unique
+  destiny   String
+  views     Int       @default(0)
+  userId    String?   @map("user_id")
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   deletedAt DateTime? @map("deleted_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdAt DateTime  @default(now()) @map("created_at")
 
   @@map("short_urls")
 }

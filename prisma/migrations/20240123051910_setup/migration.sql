@@ -9,9 +9,9 @@ CREATE TABLE "users" (
 
 -- CreateTable
 CREATE TABLE "short_urls" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "short_url" TEXT NOT NULL,
-    "origin" TEXT NOT NULL,
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "code" TEXT NOT NULL,
+    "destiny" TEXT NOT NULL,
     "views" INTEGER NOT NULL DEFAULT 0,
     "user_id" TEXT,
     "deleted_at" DATETIME,
@@ -24,4 +24,4 @@ CREATE TABLE "short_urls" (
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "short_urls_short_url_key" ON "short_urls"("short_url");
+CREATE UNIQUE INDEX "short_urls_code_key" ON "short_urls"("code");

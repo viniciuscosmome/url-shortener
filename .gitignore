@@ -1,6 +1,6 @@
 *.todo
 .env
-prisma/local-db/
+prisma/**/*database/
 
 # compiled output
 /dist

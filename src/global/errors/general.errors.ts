@@ -26,6 +26,6 @@ export class UserAlreadyExists extends CustomHttpError {
 
 export class UrlIsNotFromThisUser extends CustomHttpError {
   constructor(message?: string) {
-    super(message || 'Essa URL encurtada não pode ser alterada.', 422);
+    super(message || 'Esse dado não pode ser alterado.', 422);
   }
 }

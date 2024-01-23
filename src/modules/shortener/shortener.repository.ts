@@ -2,22 +2,22 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/lib/prisma/prisma.service';
 import { handleDatabaseError } from 'src/global/errors/database.errors';
 import type {
-  CreateShortURLExpect,
-  ShortUrlIsFromThisUserExpect,
-  UpdateOriginExpect,
-  UpdateOrignResponse,
+  CreateShortUrlCodeExpect,
+  ShortUrlCodeIsFromThisUser,
+  UpdateDestinationUrlExpect,
+  UpdateDestinationUrlResponse,
 } from './shortener.types';
 
 @Injectable()
 export class ShortenerRepository {
   constructor(private prismaService: PrismaService) {}
 
-  async create(input: CreateShortURLExpect): Promise<void> {
-    await this.prismaService.shortURL
+  async create(input: CreateShortUrlCodeExpect): Promise<void> {
+    await this.prismaService.shortUrl
       .create({
         data: {
-          shortURL: input.shortURL,
-          origin: input.origin,
+          code: input.code,
+          destiny: input.destiny,
           userId: input.userId,
         },
         select: {
@@ -28,11 +28,11 @@ export class ShortenerRepository {
       .catch(handleDatabaseError);
   }
 
-  async getOriginByShortURL(shortURL: string): Promise<string | void> {
-    const origin = await this.prismaService.shortURL
+  async getDestinyByShortUrlCode(code: string): Promise<string | void> {
+    const destinationUrl = await this.prismaService.shortUrl
       .update({
         where: {
-          shortURL: shortURL,
+          code: code,
           deletedAt: null,
         },
         data: {
@@ -41,31 +41,31 @@ export class ShortenerRepository {
           },
         },
         select: {
-          origin: true,
+          destiny: true,
         },
       })
       .then((result) => {
         if (result) {
-          return result.origin;
+          return result.destiny;
         }
 
         return;
       })
       .catch(handleDatabaseError);
 
-    return origin;
+    return destinationUrl;
   }
 
   async getAllUrlsByUserId(userId: string) {
-    const result = await this.prismaService.shortURL
+    const result = await this.prismaService.shortUrl
       .findMany({
         where: {
           userId: userId,
           deletedAt: null,
         },
         select: {
-          shortURL: true,
-          origin: true,
+          code: true,
+          destiny: true,
           views: true,
         },
       })
@@ -78,12 +78,12 @@ export class ShortenerRepository {
   async deleteUserUrlByCode(input: {
     userId: string;
     now: Date;
-    shortURL: string;
+    code: string;
   }) {
-    await this.prismaService.shortURL
+    await this.prismaService.shortUrl
       .update({
         where: {
-          shortURL: input.shortURL,
+          code: input.code,
           userId: input.userId,
           deletedAt: null,
         },
@@ -95,37 +95,37 @@ export class ShortenerRepository {
   }
 
   async updateDestineByCode(
-    input: UpdateOriginExpect,
-  ): Promise<UpdateOrignResponse | void> {
-    const info = await this.prismaService.shortURL
+    input: UpdateDestinationUrlExpect,
+  ): Promise<UpdateDestinationUrlResponse | void> {
+    const updatedInfo = await this.prismaService.shortUrl
       .update({
         where: {
           userId: input.userId,
-          shortURL: input.shortURL,
+          code: input.code,
           deletedAt: null,
         },
         data: {
-          origin: input.origin,
+          destiny: input.destiny,
         },
         select: {
-          shortURL: true,
-          origin: true,
+          code: true,
+          destiny: true,
           views: true,
         },
       })
       .then((response) => response)
       .catch(handleDatabaseError);
 
-    return info;
+    return updatedInfo;
   }
 
   async shortUrlIsFromThisUser(
-    input: ShortUrlIsFromThisUserExpect,
+    input: ShortUrlCodeIsFromThisUser,
   ): Promise<boolean | void> {
-    const result = await this.prismaService.shortURL
+    const result = await this.prismaService.shortUrl
       .findUnique({
         where: {
-          shortURL: input.shortURL,
+          code: input.code,
           userId: input.userId,
           deletedAt: null,
         },

@@ -1,31 +1,31 @@
-export type CreateShortURLExpect = {
-  shortURL: string;
-  origin: string;
+export type CreateShortUrlCodeExpect = {
+  code: string;
+  destiny: string;
   userId?: string | undefined;
 };
 
-export type GenerateShortURLResponse = {
-  id: string;
-  shortURL: string;
+export type GenerateShortUrlCodeResponse = {
+  code: string;
+  shortUrl: string;
 };
 
-type shortUTLInfo = {
-  shortURL: string;
-  origin: string;
+type ShortUrlCodeInfo = {
+  code: string;
+  destiny: string;
   views: number;
 };
 
-export type GetAllUrlsByUserIdResponse = Array<shortUTLInfo>;
+export type GetAllUrlsByUserIdResponse = Array<ShortUrlCodeInfo>;
 
-export type UpdateOriginExpect = {
+export type UpdateDestinationUrlExpect = {
   userId: string;
-  shortURL: string;
-  origin: string;
+  code: string;
+  destiny: string;
 };
 
-export type UpdateOrignResponse = shortUTLInfo;
+export type UpdateDestinationUrlResponse = ShortUrlCodeInfo;
 
-export type ShortUrlIsFromThisUserExpect = {
-  shortURL: string;
+export type ShortUrlCodeIsFromThisUser = {
+  code: string;
   userId: string;
 };
