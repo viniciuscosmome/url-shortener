@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SignInDto, SignUpDto } from './user.dto';
 import { UserRepository } from './user.repository';
@@ -17,6 +17,7 @@ export class UserController {
   ) {}
 
   @Post('/sign-up')
+  @HttpCode(201)
   @ApiOperation({ summary: 'Cria uma nova conta' })
   async signUp(@Body() input: SignUpDto) {
     const userExists = await this.userRepository.userEmailAlreadyExists(
@@ -33,9 +34,12 @@ export class UserController {
       email: input.email,
       password: hashedPassword,
     });
+
+    return { message: 'Conta criada com sucesso!' };
   }
 
   @Post('/sign-in')
+  @HttpCode(200)
   @ApiOperation({ summary: 'Acessa sua conta' })
   async signIn(@Body() input: SignInDto) {
     const user = await this.userRepository.getUserByEmail(input.email);

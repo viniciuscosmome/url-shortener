@@ -11,7 +11,7 @@ import {
   Patch,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ShortenerRepository } from './shortener.repository';
 import { ShortenerService } from './shortener.service';
 import {
@@ -42,6 +42,7 @@ export class ShortenerController {
   @UseGuards(AuthGuard)
   @Permission({ type: 'access', optional: true })
   @Post('/url')
+  @ApiBearerAuth('access')
   @ApiTags('Manipulação de URL')
   @ApiOperation({ summary: 'Encurta a URL fornecida' })
   async shorten(@Req() req: Request, @Body() input: ShortenURLDto) {
@@ -64,6 +65,7 @@ export class ShortenerController {
   @UseGuards(AuthGuard)
   @Permission({ type: 'access' })
   @Get('/url')
+  @ApiBearerAuth('access')
   @ApiTags('Manipulação de URL')
   @ApiOperation({ summary: 'Lista todas as URLs do usuário' })
   async getAllUrls(@Req() req: Request) {
@@ -79,6 +81,7 @@ export class ShortenerController {
   @UseGuards(AuthGuard)
   @Permission({ type: 'access' })
   @Patch('/url')
+  @ApiBearerAuth('access')
   @ApiTags('Manipulação de URL')
   @ApiOperation({ summary: 'Atualiza o destino de uma URL encurtada' })
   async updateDestine(@Req() req: Request, @Body() input: UpdateShortUrlDto) {
@@ -116,20 +119,21 @@ export class ShortenerController {
   @UseGuards(AuthGuard)
   @Permission({ type: 'access' })
   @Delete('/url/:shortURL')
+  @ApiBearerAuth('access')
   @ApiTags('Manipulação de URL')
   @ApiOperation({ summary: 'Exclui uma URL do usuário' })
   async excludeUrl(@Req() req: Request, @Param() params: DeleteUserUrlDto) {
     const { uid } = req[SESSION_PAYLOAD_KEY];
     const shortURL = params.shortURL;
 
-    const isFromThisUser =
+    const availableForChanges =
       await this.shortenerRepository.shortUrlIsFromThisUser({
         shortURL: shortURL,
         userId: uid,
       });
 
-    if (!isFromThisUser) {
-      throw new UrlIsNotFromThisUser();
+    if (!availableForChanges) {
+      throw new DataNotFound('Código de URL não encontrado');
     }
 
     const now = new Date();
