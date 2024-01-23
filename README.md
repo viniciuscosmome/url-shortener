@@ -1,73 +1,75 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Encurtador de URLs
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Requisitos
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+1. [Node.js - v20.11](https://nodejs.org/en) - LTS última versão estável hoje
 
-## Description
+### Clonando o repositório
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+> [!note]\
+> Para clonar desse modo você precisa do `git` instalado.
 
-## Installation
+Use o comando abaixo para clonar este repositório.
 
 ```bash
-$ npm install
+git clone https://github.com/viniciuscosmome/url-shortener
 ```
 
-## Running the app
+## Configure as variáveis de ambiente
+
+O arquivo `.env.example` tem uma cópia das variáveis de ambiente necessárias com valores de exemplo.
+
+Crie um arquivo `.env` na raiz do repositório definindo suas variáveis para poder executar a aplicação.
 
 ```bash
-# development
-$ npm run start
+# Define em qual a porta a aplicação irá executar
+PORT=3000
 
-# watch mode
-$ npm run start:dev
+# Define quantas vezes o hash da senha irá repetir
+# -> CUIDADO!
+# Quanto maior o número, mais o hash demora (recurso para minimizar ataques de sonegação de serviço)
+PASSWORD_SALT_ROUNDS=2
 
-# production mode
-$ npm run start:prod
+# Uma senha usada para criar o token de autenticação a recursos protegidos da aplicação.
+JWT_SECRET=super-secret-password
+
+# O caminho local onde a base de dados será armazenada.
+# OBS: Estou usando SQLite, mas em um mundo ideal, usariamos um SGBD mais robusto como PostgreSQL.
+DATABASE_PATH="file:./database/url-shortener.db"
 ```
 
-## Test
+## Instale as dependências
+
+O comando abaixo vai baixar todas as dependencias do projeto para você rodar localmente.
+
+O atributo "--exact" garante que você baixe a versão atual dos pacotes utilizados.
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install --exact
 ```
 
-## Support
+## Executando a aplicação
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Ambiente de desenvolvimento
 
-## Stay in touch
+Executa as migrações da base de dados e gera o arquivo `@prisma/client`
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+npm run prisma:setup:dev
+#ou
+npx prisma migrate dev && npx prisma generate
+```
 
-## License
+Inicie a aplicação de desenvolvimento
 
-Nest is [MIT licensed](LICENSE).
+```bash
+# Ambiente de desenvolvimento
+npm run start
+
+# Ambiente de desenvolvimento ('watch' mode)
+npm run start:dev
+```
+
+## Licença
+
+url-shortener [licença MIT](https://github.com/viniciuscosmome/url-shortener/blob/main/LICENSE)
