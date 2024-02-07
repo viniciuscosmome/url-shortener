@@ -1,25 +1,20 @@
 # Encurtador de URLs
 
-<details>
-  <summary>Índice</summary>
+## Índice
 
 1. [Requisitos](#requisitos)
-1. [Configurando variáveis de ambiente](#configurando-variáveis-de-ambiente)
-1. [Instalando as dependências](#instalando-as-dependências)
-1. [Executando a aplicação de desenvolvimento](#executando-a-aplicação-de-desenvolvimento)
-   - [Preparando o banco de dados](#preparando-o-banco-de-dados)
-   - [Iniciando a aplicação](#iniciando-a-aplicação)
-1. [Documentação com o Swagger](#documentação-com-o-swagger)
+   - [Clone o repositório](#clone-o-repositório)
+1. [Configure as variáveis de ambiente](#configure-as-variáveis-de-ambiente)
+1. [Execute a aplicação usando o Docker Compose](#execute-a-aplicação-usando-o-docker-compose)
+1. [Acesse as rotas documentadas da API com o Swagger](#acesse-as-rotas-documentadas-da-api-com-o-swagger)
 1. [licença](#licença)
-
-</details>
 
 ## Requisitos
 
-1. [Node.js - v20.11](https://nodejs.org/en) LTS - última versão estável hoje
-2. Um editor de código de sua preferência
+1. Um editor de código de sua preferência
+1. Docker + docker compose
 
-### Clonando o repositório
+### Clone o repositório
 
 > [!note]\
 > Para clonar desse modo você precisa do [`git`](https://git-scm.com/downloads) instalado.
@@ -30,9 +25,9 @@ Use o comando abaixo para clonar este repositório.
 git clone https://github.com/viniciuscosmome/url-shortener.git
 ```
 
-Após clonar o repositório, acesse a pasta criada (url-shortener) com seu editor de código
+Após clonar o repositório, acesse a pasta criada `url-shortener` com seu editor de código
 
-## configurando variáveis de ambiente
+## Configure as variáveis de ambiente
 
 O arquivo `.env.example` tem uma cópia das variáveis de ambiente necessárias com valores de exemplo.
 
@@ -46,59 +41,45 @@ NODE_ENV=development
 PORT=3000
 
 # Define quantas vezes o hash da senha irá repetir
-# -> CUIDADO! Quanto maior o número, mais o hash demora
-#   recurso para minimizar ataques de sonegação de serviço
+# -> CUIDADO! Quanto maior o número, mais o hash demora recurso para minimizar ataques de sonegação de serviço
 #   detalhes: https://www.npmjs.com/package/bcrypt#a-note-on-rounds
 PASSWORD_SALT_ROUNDS=2
 
-# Uma senha usada para criar o token de autenticação necessário
-#  para acesso a recursos (rotas) protegidos da aplicação.
+# Uma senha usada para criar o token de autenticação necessário para acesso a recursos (rotas) protegidos da aplicação.
 JWT_SECRET=super-secret-password
 
-# O caminho local onde a base de dados será armazenada.
-# -> OBS: Estou usando SQLite, mas em um mundo ideal
-#   usariamos um SGBD mais robusto como PostgreSQL.
-DATABASE_PATH="file:./database/url-shortener.db"
+# Configurações da base de dados
+POSTGRES_USER=adminuser
+POSTGRES_PASSWORD=adminpass
+POSTGRES_DB=url-shortener
+POSTGRES_HOST=postgres_main
+POSTGRES_PORT=5432
+
+# Use esta URL como está
+DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public"
 ```
 
-## Instalando as dependências
+## Execute a aplicação usando o Docker Compose
 
-O comando abaixo vai baixar todas as dependencias do projeto para você rodar localmente.
-
-O atributo "--exact" garante que você baixe a versão atual dos pacotes utilizados.
+Após configurar as variáveis de ambiente, execute o comando abaixo para que o ambiente no docker seja configurado e a aplicação inicie.
 
 ```bash
-npm install --exact
+# [docker compose] -> comando para usar o compose
+# [-f filename.yml] -> para selecionar um arquivo de configuração
+# [up] -> para criar e iniciar o container
+# [-d] -> para executar o container em segundo plano
+docker compose -f docker-compose.dev.yml up -d
 ```
 
-## Executando a aplicação de desenvolvimento
-
-### Preparando o banco de dados
-
-Executa as migrações da base de dados e gera o arquivo `@prisma/client`
-
-```bash
-npm run prisma:setup:dev
-#ou
-npx prisma migrate dev && npx prisma generate
-```
-
-### Iniciando a aplicação
-
-```bash
-# Ambiente de desenvolvimento
-npm run start
-
-# Ambiente de desenvolvimento ('watch' mode)
-npm run start:dev
-```
-
-## Documentação com o Swagger
+## Acesse as rotas documentadas da API com o Swagger
 
 Após a inicialização da API uma documentação estará disponível na rota `/docs`
 
+> [!note]\
+> PORT tem o mesmo valor da variável de ambiente `PORT` que você escolheu para a sua aplicação.
+
 ```md
-http://localhost:3000/docs
+http://localhost:PORT/docs
 ```
 
 ## Licença
